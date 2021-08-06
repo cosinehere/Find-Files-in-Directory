@@ -420,6 +420,9 @@ FodyWeavers.xsd
 .idea/
 *.sln.iml
 
+# vs cmake
+CMakeBuilds/
+
 # CMake
 CMakeLists.txt.user
 CMakeCache.txt

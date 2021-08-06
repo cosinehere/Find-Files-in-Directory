@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <cstring>
 
 #if defined(_WIN32)
@@ -18,6 +17,42 @@ namespace filefinds {
 void filefinds(const char* directory, std::set<std::string>& files,
                bool recursive) {
 #ifdef _WIN32
+    std::string format = directory;
+    std::queue<std::string> pathque;
+    pathque.push(format);
+
+    while (!pathque.empty()) {
+        std::string path = pathque.front();
+        pathque.pop();
+
+        std::string pathfind = path + "\\*";
+
+        WIN32_FIND_DATA find;
+        HANDLE hfind = FindFirstFile(pathfind.c_str(), &find);
+        if (hfind == INVALID_HANDLE_VALUE)
+        {
+            continue;
+        }
+        do {
+            if (!strcmp(find.cFileName, ".") || !strcmp(find.cFileName, ".."))
+            {
+                continue;
+            }
+
+            std::string fullpath = path + "\\" + find.cFileName;
+
+            if (find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                if (recursive) {
+                    pathque.push(fullpath);
+                }
+            }
+            else {
+                files.insert(fullpath);
+            }
+        } while (FindNextFile(hfind, &find));
+        FindClose(hfind);
+    }
+
 #else
     struct stat st;
     lstat(directory, &st);
