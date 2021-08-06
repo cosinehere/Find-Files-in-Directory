@@ -16,7 +16,6 @@ namespace filefinds {
 
 void filefinds(const char* directory, std::set<std::string>& files,
                bool recursive) {
-#ifdef _WIN32
     std::string format = directory;
     std::queue<std::string> pathque;
     pathque.push(format);
@@ -24,6 +23,7 @@ void filefinds(const char* directory, std::set<std::string>& files,
     while (!pathque.empty()) {
         std::string path = pathque.front();
         pathque.pop();
+#ifdef _WIN32
 
         std::string pathfind = path + "\\*";
 
@@ -51,23 +51,8 @@ void filefinds(const char* directory, std::set<std::string>& files,
             }
         } while (FindNextFile(hfind, &find));
         FindClose(hfind);
-    }
 
 #else
-    struct stat st;
-    lstat(directory, &st);
-    if (!S_ISDIR(st.st_mode)) {
-        return;
-    }
-
-    std::string format = directory;
-    std::queue<std::string> pathque;
-    pathque.push(format);
-
-    while (!pathque.empty()) {
-        std::string path = pathque.front();
-        pathque.pop();
-
         struct dirent* file;
         DIR* dir;
         dir = opendir(path.c_str());
@@ -90,9 +75,8 @@ void filefinds(const char* directory, std::set<std::string>& files,
                 pathque.push(fullpath);
             }
         }
-    }
-
 #endif
+    }
 }
 
 };  // namespace filefinds
