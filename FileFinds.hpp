@@ -14,7 +14,7 @@
 
 namespace filefinds {
 
-void filefinds(const char* directory, std::set<std::string>& files,
+void FileFinds(const char* directory, std::set<std::string>& files,
                bool recursive) {
     std::string format = directory;
     std::queue<std::string> pathque;

@@ -4,7 +4,7 @@
 
 int main() {
     std::set<std::string> files;
-    filefinds::filefinds(".", files, true);
+    filefinds::FileFinds(".", files, true);
 
     auto it = files.begin();
     for (; it != files.end(); ++it) {
