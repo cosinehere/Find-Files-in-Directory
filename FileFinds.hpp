@@ -23,19 +23,18 @@ void filefinds(const char* directory, std::set<std::string>& files,
     while (!pathque.empty()) {
         std::string path = pathque.front();
         pathque.pop();
-#ifdef _WIN32
 
+#ifdef _WIN32
         std::string pathfind = path + "\\*";
 
         WIN32_FIND_DATA find;
         HANDLE hfind = FindFirstFile(pathfind.c_str(), &find);
-        if (hfind == INVALID_HANDLE_VALUE)
-        {
+        if (hfind == INVALID_HANDLE_VALUE) {
             continue;
         }
+
         do {
-            if (!strcmp(find.cFileName, ".") || !strcmp(find.cFileName, ".."))
-            {
+            if (!strcmp(find.cFileName, ".") || !strcmp(find.cFileName, "..")) {
                 continue;
             }
 
@@ -45,21 +44,20 @@ void filefinds(const char* directory, std::set<std::string>& files,
                 if (recursive) {
                     pathque.push(fullpath);
                 }
-            }
-            else {
+            } else {
                 files.insert(fullpath);
             }
         } while (FindNextFile(hfind, &find));
         FindClose(hfind);
 
 #else
-        struct dirent* file;
         DIR* dir;
         dir = opendir(path.c_str());
         if (dir == nullptr) {
             continue;
         }
 
+        struct dirent* file;
         while ((file = readdir(dir)) != nullptr) {
             if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) {
                 continue;
