@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef _FILEFINDS_HPP_
+#define _FILEFINDS_HPP_
+
 #include <cstring>
 
 #if defined(_WIN32) || defined(WIN32) || defined (_WIN64)
@@ -83,3 +88,6 @@ void FileFinds(const char* directory, set<string>& files, bool recursive) {
 }
 
 };  // namespace filefinds
+
+#endif  // _FILEFINDS_HPP_
+
