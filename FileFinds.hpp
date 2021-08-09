@@ -14,18 +14,22 @@
 
 namespace filefinds {
 
-void FileFinds(const char* directory, std::set<std::string>& files,
+using std::string;
+using std::set;
+using std::queue;
+
+void FileFinds(const char* directory, set<string>& files,
                bool recursive) {
-    std::string format = directory;
-    std::queue<std::string> pathque;
+    string format = directory;
+    queue<string> pathque;
     pathque.push(format);
 
     while (!pathque.empty()) {
-        std::string path = pathque.front();
+        string path = pathque.front();
         pathque.pop();
 
 #ifdef _WIN32
-        std::string pathfind = path + "\\*";
+        string pathfind = path + "\\*";
 
         WIN32_FIND_DATA find;
         HANDLE hfind = FindFirstFile(pathfind.c_str(), &find);
@@ -38,7 +42,7 @@ void FileFinds(const char* directory, std::set<std::string>& files,
                 continue;
             }
 
-            std::string fullpath = path + "\\" + find.cFileName;
+            string fullpath = path + "\\" + find.cFileName;
 
             if (find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 if (recursive) {
@@ -63,7 +67,7 @@ void FileFinds(const char* directory, std::set<std::string>& files,
                 continue;
             }
 
-            std::string fullpath = path + "/" + file->d_name;
+            string fullpath = path + "/" + file->d_name;
             struct stat st;
             lstat(fullpath.c_str(), &st);
 
