@@ -1,11 +1,13 @@
 #include <cstring>
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(WIN32) || defined (_WIN64)
 #include <windows.h>
-#else
+#elif defined(linux)
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#else
+#error unsupport platform
 #endif  // defined(_WIN32)
 
 #include <string>
@@ -14,12 +16,11 @@
 
 namespace filefinds {
 
-using std::string;
-using std::set;
 using std::queue;
+using std::set;
+using std::string;
 
-void FileFinds(const char* directory, set<string>& files,
-               bool recursive) {
+void FileFinds(const char* directory, set<string>& files, bool recursive) {
     string format = directory;
     queue<string> pathque;
     pathque.push(format);
