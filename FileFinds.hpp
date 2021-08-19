@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-#if defined(_WIN32) || defined(WIN32) || defined (_WIN64)
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64)
 #include <windows.h>
 #elif defined(linux)
 #include <unistd.h>
@@ -13,7 +13,7 @@
 #include <dirent.h>
 #else
 #error unsupport platform
-#endif  // defined(_WIN32)
+#endif // defined(_WIN32)
 
 #include <string>
 #include <set>
@@ -24,11 +24,12 @@
 namespace filefinds {
 
 using std::queue;
+using std::regex;
 using std::set;
 using std::string;
-using std::regex;
 
-bool FileFinds(const char *root, set<string> &files, bool recursive, const char *filter, bool include) {
+bool FileFinds(const char *root, set<string> &files, bool recursive,
+               const char *filter, bool include) {
     string format = root;
     queue<string> pathque;
     pathque.push(format);
@@ -36,8 +37,7 @@ bool FileFinds(const char *root, set<string> &files, bool recursive, const char 
     regex re;
     try {
         re = filter;
-    }
-    catch (const std::regex_error &e) {
+    } catch (const std::regex_error &e) {
         return false;
     }
 
@@ -75,13 +75,13 @@ bool FileFinds(const char *root, set<string> &files, bool recursive, const char 
         FindClose(hfind);
 
 #else
-        DIR* dir;
+        DIR *dir;
         dir = opendir(path.c_str());
         if (dir == nullptr) {
             continue;
         }
 
-        struct dirent* file;
+        struct dirent *file;
         while ((file = readdir(dir)) != nullptr) {
             if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) {
                 continue;
@@ -93,11 +93,12 @@ bool FileFinds(const char *root, set<string> &files, bool recursive, const char 
             lstat(fullpath.c_str(), &st);
 
             if (!S_ISDIR(st.st_mode)) {
-                files.insert(fullpath);
-            } else if (recursive) {
                 if (!(include ^ match)) {
-                    pathque.push(fullpath);
+
+                    files.insert(fullpath);
                 }
+            } else if (recursive) {
+                pathque.push(fullpath);
             }
         }
 #endif
@@ -106,7 +107,7 @@ bool FileFinds(const char *root, set<string> &files, bool recursive, const char 
     return true;
 }
 
-};  // namespace filefinds
+}; // namespace filefinds
 
-#endif  // _FILEFINDS_HPP_
+#endif // _FILEFINDS_HPP_
 
