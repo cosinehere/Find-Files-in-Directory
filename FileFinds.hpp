@@ -46,7 +46,7 @@ bool FileFinds(const char *root, set<string> &files, bool recursive,
         pathque.pop();
 
 #ifdef _WIN32
-        string pathfind = path + "\\*";
+        string pathfind = path + "/*";
 
         WIN32_FIND_DATA find;
         HANDLE hfind = FindFirstFile(pathfind.c_str(), &find);
@@ -59,7 +59,7 @@ bool FileFinds(const char *root, set<string> &files, bool recursive,
                 continue;
             }
 
-            string fullpath = path + "\\" + find.cFileName;
+            string fullpath = path + "/" + find.cFileName;
             bool match = regex_search(fullpath.c_str(), re);
 
             if (find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
