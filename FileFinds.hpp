@@ -32,10 +32,11 @@ bool FileFinds(const char *root, set<string> &files, bool recursive,
     queue<string> pathque;
     pathque.push(format);
 
-    regex re("");
+    regex re(root);
     if (filter != nullptr) {
         try {
-            re = filter;
+            string str = format + "/" + filter;
+            re = str.c_str();
         }
         catch (const std::regex_error &e) {
             return false;
