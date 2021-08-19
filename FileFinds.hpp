@@ -19,16 +19,27 @@
 #include <set>
 #include <queue>
 
+#include <regex>
+
 namespace filefinds {
 
 using std::queue;
 using std::set;
 using std::string;
+using std::regex;
 
-void FileFinds(const char* directory, set<string>& files, bool recursive) {
-    string format = directory;
+bool FileFinds(const char *root, set<string> &files, bool recursive, const char *filter, bool include) {
+    string format = root;
     queue<string> pathque;
     pathque.push(format);
+
+    regex re;
+    try {
+        re = filter;
+    }
+    catch (const std::regex_error &e) {
+        return false;
+    }
 
     while (!pathque.empty()) {
         string path = pathque.front();
@@ -49,13 +60,16 @@ void FileFinds(const char* directory, set<string>& files, bool recursive) {
             }
 
             string fullpath = path + "\\" + find.cFileName;
+            bool match = regex_search(fullpath.c_str(), re);
 
             if (find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 if (recursive) {
                     pathque.push(fullpath);
                 }
             } else {
-                files.insert(fullpath);
+                if (!(include ^ match)) {
+                    files.insert(fullpath);
+                }
             }
         } while (FindNextFile(hfind, &find));
         FindClose(hfind);
@@ -74,17 +88,22 @@ void FileFinds(const char* directory, set<string>& files, bool recursive) {
             }
 
             string fullpath = path + "/" + file->d_name;
+            bool match = regex_search(fullpath.c_str(), re);
             struct stat st;
             lstat(fullpath.c_str(), &st);
 
             if (!S_ISDIR(st.st_mode)) {
                 files.insert(fullpath);
             } else if (recursive) {
-                pathque.push(fullpath);
+                if (!(include ^ match)) {
+                    pathque.push(fullpath);
+                }
             }
         }
 #endif
     }
+
+    return true;
 }
 
 };  // namespace filefinds
