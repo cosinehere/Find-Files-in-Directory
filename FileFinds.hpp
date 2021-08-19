@@ -4,6 +4,10 @@
 #define _FILEFINDS_HPP_
 
 #include <cstring>
+#include <string>
+#include <set>
+#include <queue>
+#include <regex>
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64)
 #include <windows.h>
@@ -14,12 +18,6 @@
 #else
 #error unsupport platform
 #endif // defined(_WIN32)
-
-#include <string>
-#include <set>
-#include <queue>
-
-#include <regex>
 
 namespace filefinds {
 
@@ -34,11 +32,14 @@ bool FileFinds(const char *root, set<string> &files, bool recursive,
     queue<string> pathque;
     pathque.push(format);
 
-    regex re;
-    try {
-        re = filter;
-    } catch (const std::regex_error &e) {
-        return false;
+    regex re("");
+    if (filter != nullptr) {
+        try {
+            re = filter;
+        }
+        catch (const std::regex_error &e) {
+            return false;
+        }
     }
 
     while (!pathque.empty()) {
