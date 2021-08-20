@@ -27,7 +27,7 @@ using std::set;
 using std::string;
 
 bool FileFinds(const char *root, set<string> &files, const char *filter,
-                bool include) {
+               bool include) {
     string format = root;
     queue<string> pathque;
     pathque.push(format);
@@ -37,8 +37,7 @@ bool FileFinds(const char *root, set<string> &files, const char *filter,
         try {
             string str = format + "/" + filter;
             re = str.c_str();
-        }
-        catch (const std::regex_error &e) {
+        } catch (const std::regex_error &e) {
             return false;
         }
     }
@@ -94,8 +93,7 @@ bool FileFinds(const char *root, set<string> &files, const char *filter,
 
             if (S_ISDIR(st.st_mode)) {
                 pathque.push(fullpath);
-            }
-            else {
+            } else {
                 if (!(include ^ match)) {
                     files.insert(fullpath);
                 }
