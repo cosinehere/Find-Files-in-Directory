@@ -26,8 +26,8 @@ using std::regex;
 using std::set;
 using std::string;
 
-bool FileFinds(const char *root, set<string> &files, bool recursive,
-               const char *filter, bool include) {
+bool FileFinds(const char *root, set<string> &files, const char *filter,
+                bool include) {
     string format = root;
     queue<string> pathque;
     pathque.push(format);
@@ -65,9 +65,7 @@ bool FileFinds(const char *root, set<string> &files, bool recursive,
             bool match = regex_search(fullpath.c_str(), re);
 
             if (find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                if (recursive) {
-                    pathque.push(fullpath);
-                }
+                pathque.push(fullpath);
             } else {
                 if (!(include ^ match)) {
                     files.insert(fullpath);
@@ -94,13 +92,13 @@ bool FileFinds(const char *root, set<string> &files, bool recursive,
             struct stat st;
             lstat(fullpath.c_str(), &st);
 
-            if (!S_ISDIR(st.st_mode)) {
+            if (S_ISDIR(st.st_mode)) {
+                pathque.push(fullpath);
+            }
+            else {
                 if (!(include ^ match)) {
-
                     files.insert(fullpath);
                 }
-            } else if (recursive) {
-                pathque.push(fullpath);
             }
         }
 #endif
